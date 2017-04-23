@@ -9,7 +9,7 @@
       </svg>
     </figure>
 
-    <p>Bitte schätze das Verhältnis der Flächeninhalte der beiden Kreise.</p>
+    <p>Bitte schätze das Größenverhältnis der beiden Kreise.</p>
 
     <section class="test">
       <form class="answer" @submit.prevent="onSubmit">
@@ -54,9 +54,14 @@ export default {
       const ratio = 1 + Math.ceil(Math.random() * 4) // ∈ [2,5]
       const origin = Math.random() < 0.5 ? 'left' : 'right'
 
+      // ratio = (r1 * r1) / (r2 * r2) | * (r2 * r2)
+      // (r2 * r2) * ratio = r1 * r1 | / ratio
+      // (r2 * r2) = r1 * r1 / ratio | sqrt
+      // r2 = sqrt(r1 * r1 / ratio)
+
       return origin === 'left'
-        ? { left: 75 / ratio, right: 75, origin }
-        : { left: 75, right: 75 / ratio, origin }
+        ? { left: Math.sqrt(75 * 75 / ratio), right: 75, origin }
+        : { left: 75, right: Math.sqrt(75 * 75 / ratio), origin }
     },
 
     // this one is called onSubmit, because in the template we said "@submit="onSubmit"".
@@ -73,6 +78,11 @@ export default {
       this.circles = this.generateCircles()
       this.guesses.left = this.circles.origin === 'left' ? '1' : null
       this.guesses.right = this.circles.origin === 'right' ? '1' : null
+
+      // blur current input field for ux
+      const inputs = this.$el.querySelectorAll('input')
+      inputs[0].blur()
+      inputs[1].blur()
     }
   }
 }

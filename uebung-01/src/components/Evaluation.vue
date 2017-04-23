@@ -2,6 +2,10 @@
   <div class="">
     <h1>Der Test ist zuende!</h1>
     <p>
+      Im folgenden erfährst du, wie gut du geschätzt hast.
+      Sind alle Ergebnisse richtig, erhälst du <strong><em>x = 1</em></strong>.
+    </p>
+    <p>
       Nach der Formel<br>
       <em>(wahrgenommenes Größenverhältnis) = (tatsächliches Verhältnis der Flächeninhalte)<sup>x</sup></em><br>
       ergibt sich für dich im Durchschnitt:
@@ -35,7 +39,7 @@ export default {
           actualRatio: area(r.circles.left) / area(r.circles.right),
           guessedRatio: parseInt(r.guesses.left, 10) / parseInt(r.guesses.right, 10)
         }))
-        .map(r => baseLog(r.actualRatio, r.guessedRatio))
+        .map(r => baseLog(r.guessedRatio, r.actualRatio))
         .filter(i => !isNaN(i))
 
       console.log('xs', xs)
@@ -44,8 +48,8 @@ export default {
       const avg = xs.reduce((a, b) => a + b) / xs.length
       console.log('avg', avg)
 
-      // rounded it to two decimal digits
-      return Math.round(avg * 100) / 100
+      // rounded it to three decimal digits
+      return Math.round(avg * 1000) / 1000
     }
   }
 }
