@@ -3,7 +3,7 @@
     <h1>Der Test ist zuende!</h1>
     <p>
       Im folgenden erfährst du, wie gut du geschätzt hast.
-      Sind alle Ergebnisse richtig, erhälst du <strong><em>x = 1</em></strong>.
+      <!-- Sind alle Ergebnisse richtig, erhälst du <strong><em>x = 1</em></strong>. -->
     </p>
     <p>
       Nach der Formel<br>
