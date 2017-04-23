@@ -1,23 +1,25 @@
 <template lang="html">
   <div class="">
-    <h1 class="question">Schätze das Seitenverhältnis:</h1>
+    <h1 class="question">Schätze das Verhältnis</h1>
 
     <figure>
       <svg width="357" height="150" viewBox="0 0 357 150">
-        <rect width="150" height="150" x="0" fill="#D76759" />
-        <rect width="150" height="150" x="207" fill="#D76759" />
+        <circle cx="75" cy="75" :r="circles.left" fill="#D76759" />
+        <circle cx="282" cy="75" :r="circles.right" fill="#D76759" />
       </svg>
     </figure>
+
+    <p>Bitte schätze das Verhältnis der Flächeninhalte der beiden Kreise.</p>
 
     <section class="test">
       <form class="answer" @submit.prevent="onSubmit">
         <p>
-          <input type="text" v-model="leftSquare">
+          <input type="text" v-model="guesses.left">
           zu
-          <input type="text" v-model="rightSquare">
+          <input type="text" v-model="guesses.right">
         </p>
         <p>
-          <button type="submit">Senden</button>
+          <button type="submit">Weiter</button>
         </p>
       </form>
     </section>
@@ -29,24 +31,48 @@ export default {
   // the name is only relevant for debugging
   name: 'picker',
 
-  // 'data' is the state of a component
+  // 'data' is the state of our component
   data () {
+    const circles = this.generateCircles()
+
     return {
-      type: 'circle', // either circle or square, decides what we compare,
-      leftSquare: 1, // ratio of left square
-      rightSquare: 2 // to ratio of right square
+      circles,
+      guesses: {
+        left: circles.origin === 'left' ? '1' : null,
+        right: circles.origin === 'right' ? '1' : null
+      }
     }
   },
 
   // under methods we can define functions of a component
   methods: {
+
+    // this method returns two radii and an origin
+    // if the origin is "left", the ratio would be "1 to x", if it is "right",
+    // the ratio would be "x to 1"
+    generateCircles () {
+      const ratio = 1 + Math.ceil(Math.random() * 4) // ∈ [2,5]
+      const origin = Math.random() < 0.5 ? 'left' : 'right'
+
+      return origin === 'left'
+        ? { left: 75 / ratio, right: 75, origin }
+        : { left: 75, right: 75 / ratio, origin }
+    },
+
     // this one is called onSubmit, because in the template we said "@submit="onSubmit"".
     // it could also be called "schnitzel", so there's no magic or anything
     onSubmit () {
-      console.log('trying to submit the form')
-      console.log('this.leftSquare', parseInt(this.leftSquare, 10))
-      console.log('this.rightSquare', parseInt(this.rightSquare, 10))
-      // not that we don't have to prevent the submit event, because we said "@submit.prevent"
+      // fire an event with our results so we can handle it in parent components
+      this.$emit(
+        'result',
+        // the JSON.parse / stringify returns a deep copy
+        JSON.parse(JSON.stringify({ guesses: this.guesses, circles: this.circles }))
+      )
+
+      // regenerate circles and populate our input fields
+      this.circles = this.generateCircles()
+      this.guesses.left = this.circles.origin === 'left' ? '1' : null
+      this.guesses.right = this.circles.origin === 'right' ? '1' : null
     }
   }
 }
