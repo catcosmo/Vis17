@@ -39,7 +39,7 @@ export default {
           actualRatio: area(r.circles.left) / area(r.circles.right),
           guessedRatio: parseInt(r.guesses.left, 10) / parseInt(r.guesses.right, 10)
         }))
-        .map(r => baseLog(r.guessedRatio, r.actualRatio))
+        .map(r => baseLog(r.actualRatio, r.guessedRatio))
         .filter(i => !isNaN(i))
 
       console.log('xs', xs)
