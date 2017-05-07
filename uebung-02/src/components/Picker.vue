@@ -1,19 +1,19 @@
 <template lang="html">
   <div class="">
-    <figure>
+    <figure v-if="isShowingTestImg">
       <size-distractor v-if="distractor === 'size'" />
       <rotation-distractor v-else-if="distractor === 'rotation'" />
       <color-distractor v-else-if="distractor === 'color'" />
       <no-distractor v-else-if="distractor === 'none'" />
     </figure>
 
-    <section class="test">
+    <section v-else>
       <form class="answer" @submit.prevent="onSubmit">
-        <h2>Ist eine Figur herausgestochen?</h2>
+        <h2>Ist eine einzelne Figur herausgestochen?</h2>
         <p>
           <label>Auffälligkeit:</label>
-          <select v-bind="answer">
-            <option value="none">Keine</option>
+          <select v-model="answer">
+            <option value="none">Alle identisch</option>
             <option value="rotation">Rotation</option>
             <option value="size">Größe</option>
             <option value="color">Farbe</option>
@@ -35,6 +35,8 @@ export default {
   // the name is only relevant for debugging
   name: 'picker',
 
+  props: ['currentStep', 'totalSteps'],
+
   components: {
     NoDistractor,
     RotationDistractor,
@@ -45,13 +47,31 @@ export default {
   // 'data' is the initial state of our component
   data () {
     return {
-      distractor: this.pickDistractor(),
-      answer: ''
+      isShowingTestImg: null,
+      distractor: null,
+      answer: null,
+      timeout: null
     }
+  },
+
+  mounted () {
+    this.initRound()
   },
 
   // under methods we can define functions of a component
   methods: {
+
+    initRound () {
+      // this gets called for each and every test image
+      this.distractor = this.pickDistractor()
+      this.answer = 'none'
+      this.isShowingTestImg = true
+      this.timeout = (this.currentStep / this.totalSteps <= 0.5)
+       ? 100 + Math.random() * 100 // test preattentive in first half
+       : 50 + Math.random() * 500 // test general awareness in second
+
+      setTimeout(_ => { this.isShowingTestImg = false }, this.timeout)
+    },
 
     pickDistractor () {
       // these are all possible distractors; the svg is being constructed based
@@ -61,20 +81,18 @@ export default {
       return distractors[Math.floor(Math.random() * distractors.length)]
     },
 
-    // this one is called onSubmit, because in the template we said "@submit="onSubmit"".
-    // it could also be called "schnitzel", so there's no magic or anything
     onSubmit () {
-      // fire an event with our results so we can handle it in parent components
+      // our submit handler; this emits each test result to the parent component
       this.$emit(
         'result',
         // the JSON.parse / stringify returns a deep copy
-        JSON.parse(JSON.stringify({ guesses: this.guesses, circles: this.circles }))
+        JSON.parse(JSON.stringify({
+          distractor: this.distractor, answer: this.answer, timeout: this.timeout
+        }))
       )
 
       // regenerate circles and populate our input fields
-      this.circles = this.generateCircles()
-      this.guesses.left = this.circles.origin === 'left' ? '1' : null
-      this.guesses.right = this.circles.origin === 'right' ? '1' : null
+      this.initRound()
     }
   }
 }

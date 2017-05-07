@@ -1,9 +1,17 @@
 <template>
   <div id="app">
-    <div class="test" v-if="results.length < 5">
+    <div class="test" v-if="results.length < totalSteps">
       <h1>Achte auf das Testbild</h1>
       <h2>{{currentStep}} von {{totalSteps}}</h2>
-      <picker @result="onResult" />
+
+      <div v-if="!started">
+        <p>
+          Es werden je für kurze Zeit verschiedene Bilder mit Formen gezeigt.<br>
+          In manchen Durchgängen gibt es Besonderheiten bei einzelnen Formen, in anderen nicht.
+        </p>
+        <p>Bereit? <button @click="started = true">Start</button></p>
+      </div>
+      <picker @result="onResult" :current-step="currentStep" :total-steps="totalSteps" v-else />
     </div>
     <evaluation :results="results" v-else />
   </div>
@@ -24,8 +32,9 @@ export default {
   // our app state
   data () {
     return {
+      started: false,
       currentStep: 1,
-      totalSteps: 5,
+      totalSteps: 10,
       results: []
     }
   },

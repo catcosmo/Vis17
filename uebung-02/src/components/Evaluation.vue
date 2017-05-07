@@ -2,16 +2,27 @@
   <div class="">
     <h1>Der Test ist zuende!</h1>
     <p>
-      Im folgenden erfährst du, wie gut du geschätzt hast.
-      Sind alle Ergebnisse richtig, erhälst du <strong><em>x = 1</em></strong>.<br>
-      <small>Ein Ergebnis von <em>x &lt; 1</em> heißt, du schätzt durchschnittlich kleiner, <em>x &gt; 1</em> bedeutet größer.</small>
+      Auswertung:
     </p>
-    <p>
-      Nach der Formel<br>
-      <em>(wahrgenommenes Größenverhältnis) = (tatsächliches Verhältnis der Flächeninhalte)<sup>x</sup></em><br>
-      ergibt sich für dich im Durchschnitt:
-    </p>
-    <h2><em>x = {{x}}</em></h2>
+    <ul>
+      <li v-for="(r, i) in results" :class="{correct: r.distractor === r.answer}">
+        <strong>{{i + 1}}. Runde:</strong>
+
+        <em>Unterschied:</em>
+        <span v-if="r.distractor === 'size'">Größe</span>
+        <span v-if="r.distractor === 'rotation'">Rotation</span>
+        <span v-if="r.distractor === 'color'">Farbe</span>
+        <span v-if="r.distractor === 'none'">Keiner</span>
+
+        <em>Antwort:</em>
+        <span v-if="r.answer === 'size'">Größe</span>
+        <span v-if="r.answer === 'rotation'">Rotation</span>
+        <span v-if="r.answer === 'color'">Farbe</span>
+        <span v-if="r.answer === 'none'">Keiner</span>
+
+        ({{Math.round(r.timeout)}}ms)</li>
+    </ul>
+    <p>{{results.filter(r => r.timeout <= 250 && r.distractor === r.answer).length}} Distraktoren wurden <strong>präattentiv</strong> (in unter 200ms) erkannt, insgesamt <strong>{{results.filter(r => r.distractor === r.answer).length}} richtige Antworten</strong>!</p>
   </div>
 </template>
 
@@ -20,38 +31,18 @@ export default {
   name: 'evaluation',
 
   // the results are our guesses entered in the other component
-  props: ['results'],
-
-  computed: {
-    // we calculate our x based on the results we got passed in as a prop
-    x () {
-      console.log('results', this.results)
-
-      // calculate the area of a circle
-      const area = (r) => Math.PI * r * r
-
-      // get the logarithm of x to base y
-      // source: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/log
-      const baseLog = (x, y) => Math.log(y) / Math.log(x)
-
-      // calculate the x for every single result
-      const xs = this.results
-        .map(r => ({
-          actualRatio: area(r.circles.left) / area(r.circles.right),
-          guessedRatio: parseInt(r.guesses.left, 10) / parseInt(r.guesses.right, 10)
-        }))
-        .map(r => baseLog(r.actualRatio, r.guessedRatio))
-        .filter(i => !isNaN(i))
-
-      console.log('xs', xs)
-
-      // sum all x and get the average
-      const avg = xs.reduce((a, b) => a + b) / xs.length
-      console.log('avg', avg)
-
-      // rounded it to three decimal digits
-      return Math.round(avg * 1000) / 1000
-    }
-  }
+  props: ['results']
 }
 </script>
+
+<style scoped media="screen">
+  ul {
+    max-width: 50%;
+    position: relative;
+    margin: 0 auto;
+  }
+
+  ul li.correct {
+    color: green
+  }
+</style>
