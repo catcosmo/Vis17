@@ -1,6 +1,6 @@
 <template lang="html">
   <svg width="320" height="320" viewBox="0 0 320 320">
-    <rect :x="coord[0]" :y="coord[1]" width="20" height="20" fill="#000" v-for="coord in coords" />
+    <rect :x="coord[0]" :y="coord[1]" width="20" height="20" v-for="coord in coords" />
   </svg>
 </template>
 

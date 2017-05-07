@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <div class="test" v-if="results.length < 5">
-      <h1>{{currentStep}} von {{totalSteps}}</h1>
+      <h1>Achte auf das Testbild</h1>
+      <h2>{{currentStep}} von {{totalSteps}}</h2>
       <picker @result="onResult" />
     </div>
     <evaluation :results="results" v-else />

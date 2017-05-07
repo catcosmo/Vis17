@@ -1,14 +1,15 @@
 <template lang="html">
   <div class="">
-    <h2 class="question">Achte auf das Testbild</h2>
-
     <figure>
-      <rotation-distractor />
+      <size-distractor v-if="distractor === 'size'" />
+      <rotation-distractor v-else-if="distractor === 'rotation'" />
+      <color-distractor v-else-if="distractor === 'color'" />
+      <no-distractor v-else-if="distractor === 'none'" />
     </figure>
 
     <section class="test">
       <form class="answer" @submit.prevent="onSubmit">
-        <h3>Ist eine Figur herausgestochen?</h3>
+        <h2>Ist eine Figur herausgestochen?</h2>
         <p>
           <label>Auffälligkeit:</label>
           <select v-bind="answer">
@@ -27,6 +28,8 @@
 <script>
 import NoDistractor from '@/components/figures/NoDistractor'
 import RotationDistractor from '@/components/figures/RotationDistractor'
+import SizeDistractor from '@/components/figures/SizeDistractor'
+import ColorDistractor from '@/components/figures/ColorDistractor'
 
 export default {
   // the name is only relevant for debugging
@@ -34,7 +37,9 @@ export default {
 
   components: {
     NoDistractor,
-    RotationDistractor
+    RotationDistractor,
+    SizeDistractor,
+    ColorDistractor
   },
 
   // 'data' is the initial state of our component
@@ -51,7 +56,7 @@ export default {
     pickDistractor () {
       // these are all possible distractors; the svg is being constructed based
       // on which one is picked
-      const distractors = ['none', 'rotation', 'size', 'rotation', 'color']
+      const distractors = ['none', 'rotation', 'size', 'color']
       // pick one distractor randomly:
       return distractors[Math.floor(Math.random() * distractors.length)]
     },
@@ -79,6 +84,16 @@ export default {
 figure {
   margin-left: 0;
   margin-right: 0
+}
+
+rect {
+  fill: #F8044C;
+  stroke-width: 2px;
+  stroke: white
+}
+
+rect.special-color {
+  fill: #88EAF5
 }
 
 .answer input {
