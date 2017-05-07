@@ -1,25 +1,21 @@
 <template lang="html">
   <div class="">
-    <h1 class="question">Schätze das Verhältnis</h1>
+    <h1 class="question">Target Detection</h1>
 
     <figure>
       <svg width="357" height="150" viewBox="0 0 357 150">
-        <circle cx="75" cy="75" :r="circles.left" fill="#D76759" />
-        <circle cx="282" cy="75" :r="circles.right" fill="#D76759" />
+            <circle v-for="circle in circles" v-bind:cx="circle.x" v-bind:cy="circle.y" :r="5" v-bind:fill="circle.color" />
       </svg>
     </figure>
 
-    <p>Bitte schätze das Größenverhältnis der beiden Kreise.</p>
+    <p>Was there anyone standing out?</p>
 
     <section class="test">
       <form class="answer" @submit.prevent="onSubmit">
+
         <p>
-          <input type="text" v-model="guesses.left">
-          zu
-          <input type="text" v-model="guesses.right">
-        </p>
-        <p>
-          <button type="submit">Weiter</button>
+          <button id="jaButton" type="submit" v-model="guesses.yes">Ja</button>
+          <button id="neinButton" type="submit" v-model="guesses.no">Nein</button>
         </p>
       </form>
     </section>
@@ -33,56 +29,69 @@ export default {
 
   // 'data' is the state of our component
   data () {
-    const circles = this.generateCircles()
+    const array = this.generateCircles()
+    const hasBlue = this.generateColor(array)
+    const circles = { circles: array, hadBlue: hasBlue, guesses: {yes: null, no: null} }
+    // return {
+    //   circles: [
+    //     { x: '60', y: '80', color: 'red' },
+    //     { x: '120', y: '90', color: 'red' }
+    //   ]
+    // }
 
-    return {
-      circles,
-      guesses: {
-        left: circles.origin === 'left' ? '1' : null,
-        right: circles.origin === 'right' ? '1' : null
-      }
-    }
+    return circles
   },
 
   // under methods we can define functions of a component
   methods: {
 
+    getRandomInt (min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min
+    },
+
     // this method returns two radii and an origin
     // if the origin is "left", the ratio would be "1 to x", if it is "right",
     // the ratio would be "x to 1"
     generateCircles () {
-      const ratio = 1 + Math.ceil(Math.random() * 4) // ∈ [2,5]
-      const origin = Math.random() < 0.5 ? 'left' : 'right'
+      // const ratio = 1 + Math.ceil(Math.random() * 4) // ∈ [2,5]
+      // const origin = Math.random() < 0.5 ? 'left' : 'right'
+      var values = []
+      for (var i = 0; i < 23; i++) {
+        var xRand = '' + this.getRandomInt(5, 352)
+        var yRand = '' + this.getRandomInt(5, 145)
+        values.push({x: xRand, y: yRand, color: 'red'})
+      }
 
       // ratio = (r1 * r1) / (r2 * r2) | * (r2 * r2)
       // (r2 * r2) * ratio = r1 * r1 | / ratio
       // (r2 * r2) = r1 * r1 / ratio | sqrt
       // r2 = sqrt(r1 * r1 / ratio)
 
-      return origin === 'left'
-        ? { left: Math.sqrt(75 * 75 / ratio), right: 75, origin }
-        : { left: 75, right: Math.sqrt(75 * 75 / ratio), origin }
+      return values
+    },
+
+    generateColor (circles) {
+      const index = this.getRandomInt(0, 46)
+      if (index < 23) {
+        circles[index].color = 'blue'
+        return true
+      }
+      return false
     },
 
     // this one is called onSubmit, because in the template we said "@submit="onSubmit"".
     // it could also be called "schnitzel", so there's no magic or anything
     onSubmit () {
+      var correct = false
+      if ((this.hadBlue && this.guesses.yes) || (!this.hadBlue && this.guesses.no)) {
+        correct = true
+      }
       // fire an event with our results so we can handle it in parent components
       this.$emit(
         'result',
         // the JSON.parse / stringify returns a deep copy
-        JSON.parse(JSON.stringify({ guesses: this.guesses, circles: this.circles }))
+        JSON.parse(JSON.stringify({ correctAnswer: correct }))
       )
-
-      // regenerate circles and populate our input fields
-      this.circles = this.generateCircles()
-      this.guesses.left = this.circles.origin === 'left' ? '1' : null
-      this.guesses.right = this.circles.origin === 'right' ? '1' : null
-
-      // blur current input field for ux
-      const inputs = this.$el.querySelectorAll('input')
-      inputs[0].blur()
-      inputs[1].blur()
     }
   }
 }
@@ -92,6 +101,12 @@ export default {
 figure {
   margin-left: 0;
   margin-right: 0
+}
+
+html{
+  background-color: black;
+  color: white;
+  font-family: helvetica
 }
 
 .answer input {
