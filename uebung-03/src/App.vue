@@ -25,7 +25,7 @@ export default {
   mounted () {
     // this.$store comes from the central data store in vuex/store.js;
     // it's available in all components.
-    this.$store.dispatch('fetchTsv', '/static/cars.tsv')
+    this.$store.dispatch('fetchTsv', './static/cars.tsv')
   }
 }
 </script>
@@ -38,5 +38,6 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+  margin-bottom: 60px;
 }
 </style>
