@@ -4,7 +4,7 @@
     <rect class="axis-bar" x="30" y="530" width="500" height="1" v-if="axis === 'xAxis'" />
     <rect class="axis-bar" x="30" y="30" width="1" height="500" v-else />
     <!-- our axis label -->
-    <g transform="translate(45 0)" v-if="axis === 'xAxis'">
+    <g transform="translate(30 0)" v-if="axis === 'xAxis'">
       <text class="axis-label"
          x="50%" y="555" alignment-baseline="bottom" text-anchor="middle">{{this.data.label}}</text>
     </g>
