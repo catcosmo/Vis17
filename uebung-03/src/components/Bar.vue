@@ -59,23 +59,27 @@ export default {
         stepSize = 1
       } else if (range < 100) {
         stepSize = 10
-      } else { // range < 1000
+      } else if (range < 1000) {
         stepSize = 100
+      } else { // if (range < 10000) {
+        stepSize = 1000
       }
+
       for (let i = this.data.min; i <= this.data.max; i += stepSize) {
         values.push(i)
       }
 
       // now we need to find out whether there's a rest and how big it is
       // compared to the whole range we cover
-      const rest = (this.data.max - values[values.length - 1]) / range
+      const rest = (this.data.max - values[values.length - 1]) / this.data.max
       console.log('values', values)
       console.log('rest', rest)
 
       // so we know now on which area we have do place the ticks, having
       // 500px available in total
+      const availableSpace = 500
       const ticks = values.map(val => ({
-        position: ((val - this.data.min) / range) * 500 * (1 - rest),
+        position: ((val - this.data.min) / range) * availableSpace,
         value: val
       }))
       console.log('ticks', ticks)
