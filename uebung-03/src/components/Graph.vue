@@ -1,6 +1,18 @@
 <template>
   <div class="graph">
     <h1>Car visualisation</h1>
+    <div class="">
+      X-Axis:
+      <select v-model="xAxis">
+        <option v-for="dimension in $store.getters.numericDimensions">{{dimension}}</option>
+      </select>
+
+      Y-Axis:
+      <select v-model="yAxis">
+        <option v-for="dimension in $store.getters.numericDimensions">{{dimension}}</option>
+      </select>
+    </div>
+
     <!--
       the drawing area is: 30px border on all sides,
       500px for the items
@@ -21,7 +33,26 @@ import Bar from '@/components/Bar'
 
 export default {
   name: 'graph',
-  components: { Item, Bar }
+  components: { Item, Bar },
+  computed: {
+    xAxis: {
+      get () {
+        return this.$store.state.dimensions.x
+      },
+      set (dimension) {
+        this.$store.commit('setDimension', { axis: 'x', dimension: dimension })
+      }
+    },
+
+    yAxis: {
+      get () {
+        return this.$store.state.dimensions.y
+      },
+      set (dimension) {
+        this.$store.commit('setDimension', { axis: 'y', dimension: dimension })
+      }
+    }
+  }
 }
 </script>
 

@@ -44,6 +44,17 @@ export default new Vuex.Store({
       state.dimensions.x = dimensions[0]
       state.dimensions.y = dimensions[1]
       state.data = state.displayed = data
+    },
+
+    /**
+     * Change x or y dimension
+     *
+     * @param {Object} state
+     * @param {String} axis      x or y
+     * @param {String} dimension a numeric dimension
+     */
+    setDimension (state, { axis, dimension }) {
+      state.dimensions[axis] = dimension
     }
   },
 
@@ -77,6 +88,18 @@ export default new Vuex.Store({
         min: Math.min.apply(null, data),
         max: Math.max.apply(null, data)
       }
+    },
+
+    /**
+     * Get all numeric dimensions that we can put on bars
+     *
+     * @param  {Object}   state
+     * @return {String[]}
+     */
+    numericDimensions (state) {
+      if (!state.data.length) return []
+      const data = state.data[0]
+      return Object.keys(data).filter(k => typeof data[k] === 'number')
     }
 
   },
