@@ -1,41 +1,27 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank">Forum</a></li>
-      <li><a href="https://gitter.im/vuejs/vue" target="_blank">Gitter Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank">Twitter</a></li>
-      <br>
-      <li><a href="http://vuejs-templates.github.io/webpack/" target="_blank">Docs for This Template</a></li>
-    </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li><a href="http://router.vuejs.org/" target="_blank">vue-router</a></li>
-      <li><a href="http://vuex.vuejs.org/" target="_blank">vuex</a></li>
-      <li><a href="http://vue-loader.vuejs.org/" target="_blank">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank">awesome-vue</a></li>
-    </ul>
+  <div class="graph">
+    <h1>Car visualisation</h1>
+    <!--
+      the drawing area is: 30px border on left and bottom,
+      500px for the items
+    -->
+    <svg width="530" height="530">
+      <!-- to draw crisp lines, we translate the whole graph -->
+      <g transform="translate(0.5, 0.5)">
+        <bar axis="xAxis" />
+        <bar axis="yAxis" />
+      </g>
+    </svg>
   </div>
 </template>
 
 <script>
-import Glyph from '@/components/Glyph'
+import Item from '@/components/Item'
 import Bar from '@/components/Bar'
 
 export default {
   name: 'graph',
-  components: { Glyph, Bar },
-  data () {
-    return {
-      msg: 'Welcome to Your Vue.js App'
-    }
-  },
-  mounted () {
-    console.log('Hi, i\'m mounted')
-    this.$store.dispatch('fetchTsv', '/static/cars.tsv')
-  }
+  components: { Item, Bar }
 }
 </script>
 

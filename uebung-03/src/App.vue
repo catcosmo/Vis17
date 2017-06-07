@@ -1,7 +1,11 @@
 <template>
   <div id="app">
-    <img src="./assets/logo.png">
-    <graph />
+    <div v-if="hasData">
+      <graph />
+    </div>
+    <div v-else>
+      Fetching data...
+    </div>
   </div>
 </template>
 
@@ -12,6 +16,16 @@ export default {
   name: 'app',
   components: {
     Graph
+  },
+  computed: {
+    hasData () {
+      return this.$store.state.data.length
+    }
+  },
+  mounted () {
+    // this.$store comes from the central data store in vuex/store.js;
+    // it's available in all components.
+    this.$store.dispatch('fetchTsv', '/static/cars.tsv')
   }
 }
 </script>

@@ -10,8 +10,12 @@ const debug = process.env.NODE_ENV !== 'production'
 
 export default new Vuex.Store({
   state: {
-    data: {},   // all the data
-    visible: {} // displayed data
+    data: [],      // all the data
+    displayed: [], // displayed data
+    dimensions: {
+      x: '',
+      y: ''
+    }
   },
 
   mutations: {
@@ -22,19 +26,59 @@ export default new Vuex.Store({
      * @param {Object} data  Our new data
      */
     reset (state, data) {
-      state.data = state.visible = data
+      // set dimensions arbitrarily to the first two numeric values
+      const firstRow = data[0]
+      const keys = Object.keys(firstRow)
+      const vals = Object.values(firstRow)
+
+      let dimensions = []
+      for (let i = 0, l = vals.length; i < l; i++) {
+        if (typeof vals[i] === 'number') {
+          dimensions.push(keys[i])
+          if (dimensions.length === 2) {
+            break
+          }
+        }
+      }
+
+      state.dimensions.x = dimensions[0]
+      state.dimensions.y = dimensions[1]
+      state.data = state.displayed = data
+    }
+  },
+
+  getters: {
+
+    /**
+     * @param  {Object}  state
+     * @return {Object}         An object describing the current data for the x axis
+     */
+    xAxis (state) {
+      const label = state.dimensions.x
+      const data = state.displayed.map(item => item[label])
+      return {
+        label,
+        data,
+        min: Math.min.apply(null, data),
+        max: Math.max.apply(null, data)
+      }
     },
 
     /**
-     * Set visible data by defining a filter function
-     *
-     * @param  {Object}   state
-     * @param  {Function} filterFn
+     * @param  {Object}  state
+     * @return {Object}         An object describing the current data for the y axis
      */
-    filter (state, filterFn) {
-      const copy = JSON.parse(JSON.stringify(state.data))
-      state.visible = filterFn(copy)
+    yAxis (state) {
+      const label = state.dimensions.y
+      const data = state.displayed.map(item => item[label])
+      return {
+        label,
+        data,
+        min: Math.min.apply(null, data),
+        max: Math.max.apply(null, data)
+      }
     }
+
   },
 
   actions: {
@@ -50,6 +94,7 @@ export default new Vuex.Store({
         .then(res => res.text())
         .then(tsv => {
           console.log('Fetched text file, parsing...')
+          const isNumeric = /-?\d+(\.\d+)?/
 
           // first parse into a header array and an array of rows
           const [header, ...rows] = tsv.split('\n')
@@ -60,16 +105,24 @@ export default new Vuex.Store({
           return rows.map(row => {
             let transformed = {}
             for (let i = 0, l = row.length; i < l; i++) {
-              transformed[header[i]] = row[i]
+              const label = header[i]
+              // parse numeric values
+              transformed[label] = row[i].match(isNumeric)
+                ? parseFloat(row[i])
+                : row[i]
+
+              // handle non-available data sets
+              if (transformed[label] === 'NA') {
+                transformed[label] = null
+              }
             }
             return transformed
           })
         })
-        .then(parsed => {
+        .then(data => {
           // TODO: Convert to metric units
           console.log('Parsed data')
-          console.log(parsed)
-          commit('reset', parsed)
+          commit('reset', data)
         })
         .catch(err => console.error('Something went wrong fetching & parsing the data :(', err))
     }
