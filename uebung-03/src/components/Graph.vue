@@ -22,6 +22,10 @@
       <g transform="translate(0.5, 0.5)">
         <bar axis="xAxis" />
         <bar axis="yAxis" />
+        <!-- transform again and all our items are in a coordinate space of [0, 500] -->
+        <g transform="translate(30, 30)">
+          <item :data="data" :key="Object.values(data).join('-')" v-for="data in $store.state.displayed" />
+        </g>
       </g>
     </svg>
   </div>
