@@ -2,10 +2,10 @@
   <div class="graph">
     <h1>Car visualisation</h1>
     <!--
-      the drawing area is: 30px border on left and bottom,
+      the drawing area is: 30px border on all sides,
       500px for the items
     -->
-    <svg width="530" height="530">
+    <svg width="560" height="560">
       <!-- to draw crisp lines, we translate the whole graph -->
       <g transform="translate(0.5, 0.5)">
         <bar axis="xAxis" />
