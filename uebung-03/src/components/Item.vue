@@ -1,12 +1,14 @@
 <template lang="html">
-  <rect
-    :width="width"
-    :height="height"
-    :x="x * (500 - width)"
-    :y="y * (500 - height)" />
+  <use xlink:href="#car"
+    :transform="`scale(${scale})`"
+    :x="x"
+    :y="y" />
 </template>
 
 <script>
+const originalWidth = 73.74
+const originalHeight = 53.42
+
 export default {
   name: 'glyph',
 
@@ -14,27 +16,37 @@ export default {
   props: [ 'data' ],
 
   data () {
+    const targetWidth = 30
+
+    const horsepowerPercentage = this.data['Horsepower'] / this.$store.getters.horsepower.max
+    const scaleMultiplier = 0.5 + horsepowerPercentage * 0.5 // scale from [0.5, 1]
+    const scale = (1 / originalWidth * targetWidth) * scaleMultiplier
+
     return {
-      width: 10,
-      height: 10
+      scale,
+      width: originalWidth,
+      height: originalHeight
     }
   },
 
   computed: {
     /**
-     * @return {Number} This items relative x-coordinate (between 0 and 1)
+     * @return {Number} This item's absolute x-coordinate
      */
     x () {
       const xVal = this.data[this.$store.state.dimensions.x]
-      return (xVal - this.xAxis.min) / (this.xAxis.max - this.xAxis.min)
+      const relativePosition = (xVal - this.xAxis.min) / (this.xAxis.max - this.xAxis.min)
+      return this.width / -2 + relativePosition * 500 / this.scale
     },
 
     /**
-     * @return {Number} This items relative y-coordinate (between 0 and 1)
+     * @return {Number} This item's absolute y-coordinate
      */
     y () {
       const yVal = this.data[this.$store.state.dimensions.y]
-      return (yVal - this.yAxis.min) / (this.yAxis.max - this.yAxis.min)
+      const relativePosition = (yVal - this.yAxis.min) / (this.yAxis.max - this.yAxis.min)
+
+      return this.height / -2 + relativePosition * 500 / this.scale
     },
 
     /**

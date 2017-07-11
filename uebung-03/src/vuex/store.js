@@ -8,6 +8,21 @@ import createLogger from 'vuex/dist/logger'
 Vue.use(Vuex)
 const debug = process.env.NODE_ENV !== 'production'
 
+const cache = {}
+function cachedGetter (state, label) {
+  // state doesn't really change in our app once it's set,
+  // so we don't need invalidation
+  if (cache[label]) return cache[label]
+  const data = state.displayed.map(item => item[label])
+  cache[label] = {
+    label,
+    data,
+    min: Math.min.apply(null, data),
+    max: Math.max.apply(null, data)
+  }
+  return cache[label]
+}
+
 export default new Vuex.Store({
   state: {
     data: [],      // all the data
@@ -60,19 +75,17 @@ export default new Vuex.Store({
 
   getters: {
 
+    horsepower (state) {
+      return cachedGetter(state, 'Horsepower')
+    },
+
     /**
      * @param  {Object}  state
      * @return {Object}         An object describing the current data for the x axis
      */
     xAxis (state) {
       const label = state.dimensions.x
-      const data = state.displayed.map(item => item[label])
-      return {
-        label,
-        data,
-        min: Math.min.apply(null, data),
-        max: Math.max.apply(null, data)
-      }
+      return cachedGetter(state, label)
     },
 
     /**
@@ -81,13 +94,7 @@ export default new Vuex.Store({
      */
     yAxis (state) {
       const label = state.dimensions.y
-      const data = state.displayed.map(item => item[label])
-      return {
-        label,
-        data,
-        min: Math.min.apply(null, data),
-        max: Math.max.apply(null, data)
-      }
+      return cachedGetter(state, label)
     },
 
     /**
