@@ -2,7 +2,9 @@
   <use xlink:href="#car"
     :transform="`scale(${scale})`"
     :x="x"
-    :y="y" />
+    :y="y">
+    <title>{{tooltip}}</title>
+  </use>
 </template>
 
 <script>
@@ -65,6 +67,20 @@ export default {
      */
     yAxis () {
       return this.$store.getters.yAxis
+    },
+
+    /**
+     * Computes the tooltip based on currently selected axes
+     * and some always visible info.
+     *
+     * @return {String}
+     */
+    tooltip () {
+      const {data} = this
+      const name = `${data.Manufacturer} ${data.Car}`.split(' ')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ')
+      return `${name}, ${data.Horsepower}PS`
     }
   }
 }
