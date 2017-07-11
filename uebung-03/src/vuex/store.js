@@ -150,9 +150,17 @@ export default new Vuex.Store({
           })
         })
         .then(data => {
-          // TODO: Convert to metric units
-          console.log('Parsed data')
-          commit('reset', data)
+          console.log('Parsed data, converting...')
+          const converted = data.map(datum => {
+            datum['KM per Liter'] = datum['MPG'] * 0.43
+            datum['Displacement'] *= 16.39
+            datum['Weight'] *= 0.45
+            delete datum['MPG']
+            return datum
+          })
+          console.log('Converted!')
+
+          commit('reset', converted)
         })
         .catch(err => console.error('Something went wrong fetching & parsing the data :(', err))
     }
