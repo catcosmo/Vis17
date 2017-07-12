@@ -37,6 +37,13 @@
         </g>
       </g>
     </svg>
+    <p class="legend">
+      <strong class="space-right">Legend:</strong>
+      <span class="dot small">Less weight</span>
+      <span class="dot large space-right">More weight</span>
+      <span class="dot red">Less km/l</span>
+      <span class="dot green">More km/l</span>
+    </p>
   </div>
 </template>
 
@@ -87,6 +94,54 @@ li {
 
 a {
   color: #42b983;
+}
+
+.legend strong,
+.legend span {
+  display: inline-block;
+}
+
+.legend span {
+  margin: 0 .4em;
+  position: relative;
+}
+
+.legend .space-right {
+  margin-right: .6em;
+}
+
+.legend .dot:before {
+  display: 'block';
+  content: ' ';
+  overflow: hidden;
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  left: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #222;
+  border-radius: 100%;
+}
+
+.legend .dot.small:before {
+  width: 4px;
+  height: 4px;
+  left: -9px;
+}
+
+.legend .dot.large:before {
+  width: 8px;
+  height: 8px;
+  left: -11px;
+}
+
+.legend .dot.green:before {
+  background: #19FF00;
+}
+
+.legend .dot.red:before {
+  background: #FF0000;
 }
 
 .glyphs .glyph {

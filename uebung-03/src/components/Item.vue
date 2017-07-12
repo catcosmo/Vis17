@@ -80,7 +80,7 @@ export default {
       const name = `${data.Manufacturer} ${'' + data.Car}`.split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ')
-      return `${name}, ${data.Horsepower}PS`
+      return `${name}, ${data.Horsepower}PS, ${data['KM per Liter']}km/l`
     },
 
     /**
@@ -89,13 +89,13 @@ export default {
      */
     fill () {
       const val = this.data['KM per Liter']
-      if (val == null) return [0, 0, 0]
+      if (val == null) return [0, '100%', '50%']
 
       const kmPerLiter = this.$store.getters.kmPerLiter
       const percentage = (val - kmPerLiter.min) / kmPerLiter.max
 
       // red is at 0 deg, green is at 120
-      return [Math.round(120 * (1 - percentage) * 10) / 10, 100 + '%', 50 + '%']
+      return [Math.round(120 * percentage * 10) / 10, '100%', '50%']
     }
   }
 }
