@@ -39,8 +39,8 @@
     </svg>
     <p class="legend">
       <strong class="space-right">Legend:</strong>
-      <span class="dot small">Less weight</span>
-      <span class="dot large space-right">More weight</span>
+      <span class="dot small">Less HP</span>
+      <span class="dot large space-right">More HP</span>
       <span class="dot red">Less km/l</span>
       <span class="dot green">More km/l</span>
     </p>
