@@ -48,7 +48,7 @@ export default {
     y () {
       const yVal = this.data[this.$store.state.dimensions.y]
       const relativePosition = (yVal - this.yAxis.min) / (this.yAxis.max - this.yAxis.min)
-      return this.height / -2 + relativePosition * 500 / this.scale
+      return this.height / -2 + (1 - relativePosition) * 500 / this.scale
     },
 
     /**
