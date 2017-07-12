@@ -2,7 +2,8 @@
   <use class="glyph" xlink:href="#car"
     :transform="`scale(${scale})`"
     :x="x"
-    :y="y">
+    :y="y"
+    :fill="`hsl(${fill.join(',')})`">
     <title>{{tooltip}}</title>
   </use>
 </template>
@@ -47,7 +48,6 @@ export default {
     y () {
       const yVal = this.data[this.$store.state.dimensions.y]
       const relativePosition = (yVal - this.yAxis.min) / (this.yAxis.max - this.yAxis.min)
-
       return this.height / -2 + relativePosition * 500 / this.scale
     },
 
@@ -81,6 +81,21 @@ export default {
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ')
       return `${name}, ${data.Horsepower}PS`
+    },
+
+    /**
+     * Returns a color between green and red
+     * @return {Number[]} HSL array
+     */
+    fill () {
+      const val = this.data['KM per Liter']
+      if (val == null) return [0, 0, 0]
+
+      const kmPerLiter = this.$store.getters.kmPerLiter
+      const percentage = (val - kmPerLiter.min) / kmPerLiter.max
+
+      // red is at 0 deg, green is at 120
+      return [Math.round(120 * (1 - percentage) * 10) / 10, 100 + '%', 50 + '%']
     }
   }
 }
@@ -88,7 +103,7 @@ export default {
 
 <style lang="css">
 .glyph:hover {
-  fill: #f00;
+  fill: #333;
   opacity: 1 !important;
 }
 </style>

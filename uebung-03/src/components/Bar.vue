@@ -54,16 +54,7 @@ export default {
 
       // first we build up all ticks depending on our scale
       let values = []
-      let stepSize = null
-      if (range < 10) {
-        stepSize = 1
-      } else if (range < 100) {
-        stepSize = 10
-      } else if (range < 1000) {
-        stepSize = 100
-      } else { // if (range < 10000) {
-        stepSize = 1000
-      }
+      let stepSize = Math.round(range / 10)
 
       for (let i = this.data.min; i <= this.data.max; i += stepSize) {
         values.push(i)

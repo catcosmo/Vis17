@@ -79,6 +79,10 @@ export default new Vuex.Store({
       return cachedGetter(state, 'Horsepower')
     },
 
+    kmPerLiter (state) {
+      return cachedGetter(state, 'KM per Liter')
+    },
+
     /**
      * @param  {Object}  state
      * @return {Object}         An object describing the current data for the x axis
@@ -152,9 +156,9 @@ export default new Vuex.Store({
         .then(data => {
           console.log('Parsed data, converting...')
           const converted = data.map(datum => {
-            datum['KM per Liter'] = Math.round(datum['MPG'] * 1.609 / 3.785 * 10) / 10
-            datum['Displacement'] = Math.round(datum['Displacement'] * 16.387 * 10) / 10
-            datum['Weight'] = Math.round(datum['Weight'] * 0.4536 * 10) / 10
+            datum['KM per Liter'] = Math.round(datum['MPG'] * 1.609 / 3.785)
+            datum['Displacement'] = Math.round(datum['Displacement'] * 16.387)
+            datum['Weight'] = Math.round(datum['Weight'] * 0.4536)
             delete datum['MPG']
             return datum
           })
