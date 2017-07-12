@@ -1,5 +1,5 @@
 <template lang="html">
-  <use xlink:href="#car"
+  <use class="glyph" xlink:href="#car"
     :transform="`scale(${scale})`"
     :x="x"
     :y="y">
@@ -77,7 +77,7 @@ export default {
      */
     tooltip () {
       const {data} = this
-      const name = `${data.Manufacturer} ${data.Car}`.split(' ')
+      const name = `${data.Manufacturer} ${'' + data.Car}`.split(' ')
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
         .join(' ')
       return `${name}, ${data.Horsepower}PS`
@@ -87,4 +87,8 @@ export default {
 </script>
 
 <style lang="css">
+.glyph:hover {
+  fill: #f00;
+  opacity: 1 !important;
+}
 </style>
