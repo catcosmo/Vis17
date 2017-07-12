@@ -124,7 +124,7 @@ export default new Vuex.Store({
         .then(res => res.text())
         .then(tsv => {
           console.log('Fetched text file, parsing...')
-          const isNumeric = /-?\d+(\.\d+)?/
+          const isNumeric = /^-?\d+(\.\d+)?$/
 
           // first parse into a header array and an array of rows
           const [header, ...rows] = tsv.split('\n')
@@ -152,9 +152,9 @@ export default new Vuex.Store({
         .then(data => {
           console.log('Parsed data, converting...')
           const converted = data.map(datum => {
-            datum['KM per Liter'] = datum['MPG'] * 0.43
-            datum['Displacement'] *= 16.39
-            datum['Weight'] *= 0.45
+            datum['KM per Liter'] = Math.round(datum['MPG'] * 1.609 / 3.785 * 10) / 10
+            datum['Displacement'] = Math.round(datum['Displacement'] * 16.387 * 10) / 10
+            datum['Weight'] = Math.round(datum['Weight'] * 0.4536 * 10) / 10
             delete datum['MPG']
             return datum
           })
